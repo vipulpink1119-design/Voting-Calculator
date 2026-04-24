@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>ચૂંટણી મતદાન ટકાવારી કેલ્ક્યુલેટર | Election Voting Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Vadodara:wght@400;600;700;800&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Hind Vadodara', sans-serif;
+  background: #f0f4f8;
+  color: #0f172a;
+  min-height: 100vh;
+}
+
+.page {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 12px 16px;
+}
+
+/* Top Bar */
+.topbar {
+  background: #0f172a;
+  border-radius: 16px;
+  padding: 12px 20px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.topbar-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: white;
+}
+
+.topbar-title em {
+  color: #a78bfa;
+  font-style: normal;
+}
+
+.lang-sel {
+  background: #1e293b;
+  border: 1px solid #6d28d9;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.save-badge {
+  background: #10b981;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  display: none;
+}
+
+/* Meta Info */
+.meta-card {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.meta-field {
+  flex: 1;
+  min-width: 200px;
+}
+
+.meta-field label {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #475569;
+  display: block;
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+}
+
+.meta-field input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.meta-field input:focus {
+  outline: none;
+  border-color: #7c3aed;
+}
+
+.ps-double {
+  display: flex;
+  gap: 12px;
+}
+
+.ps-double input {
+  flex: 1;
+}
+
+.hint {
+  font-size: 10px;
+  color: #64748b;
+  margin-top: 5px;
+}
+
+/* Panchayat Cards */
+.panchayat-card {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 14px 20px 0 20px;
+}
+
+.card-header.tp {
+  background: linear-gradient(135deg, #1e40af, #4338ca);
+}
+
+.card-header.dp {
+  background: linear-gradient(135deg, #9d174d, #7e22ce);
+}
+
+.card-header h2 {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 12px;
+}
+
+.voter-row {
+  display: flex;
+  gap: 12px;
+  padding-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.voter-box {
+  background: rgba(255,255,255,0.15);
+  border-radius: 12px;
+  padding: 8px 16px;
+  flex: 1;
+  min-width: 100px;
+  text-align: center;
+}
+
+.voter-box label {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.8);
+  text-transform: uppercase;
+  display: block;
+}
+
+.voter-box input {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid rgba(255,255,255,0.4);
+  color: white;
+  font-size: 20px;
+  font-weight: 800;
+  text-align: center;
+  width: 100%;
+  outline: none;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+.voter-box.tot {
+  background: rgba(255,255,255,0.25);
+}
+
+.voter-box.tot .val {
+  font-size: 24px;
+  font-weight: 900;
+  color: white;
+}
+
+/* Table */
+.table-wrapper {
+  overflow-x: auto;
+  padding: 0;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  min-width: 950px;
+}
+
+.data-table th {
+  padding: 8px 5px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 10px;
+}
+
+.data-table thead tr:first-child th {
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.hd-time {
+  background: #334155;
+  color: #cbd5e1;
+  text-align: left;
+  padding-left: 12px;
+}
+
+.hd-prog {
+  background: #1e3a8a;
+  color: #bfdbfe;
+}
+
+.hd-pct {
+  background: #1e40af;
+  color: #93c5fd;
+}
+
+.hd-2h {
+  background: #065f46;
+  color: #a7f3d0;
+}
+
+.hd-2hpct {
+  background: #064e3b;
+  color: #6ee7b7;
+}
+
+.data-table tr.sub th {
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 10px;
+  padding: 6px 4px;
+}
+
+.data-table tbody tr {
+  border-bottom: 1px solid #eef2f6;
+}
+
+.data-table tbody tr:nth-child(odd) {
+  background: #fafcff;
+}
+
+.data-table tbody tr:nth-child(even) {
+  background: #fff9fd;
+}
+
+.data-table td {
+  padding: 8px 5px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.td-time {
+  text-align: left;
+  padding-left: 12px;
+  font-weight: 700;
+  background: #f5f7fa;
+  border-right: 2px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+input.pin-input {
+  width: 70px;
+  padding: 6px 4px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: inherit;
+}
+
+input.pin-input:focus {
+  outline: none;
+  border-color: #7c3aed;
+}
+
+.c-male {
+  color: #1a56db;
+  font-weight: 700;
+}
+
+.c-female {
+  color: #c0147a;
+  font-weight: 700;
+}
+
+.c-total {
+  color: #047857;
+  font-weight: 700;
+}
+
+.tot-row td {
+  background: #1e293b !important;
+  color: white;
+  font-weight: 800;
+  border-top: 3px solid #334155;
+}
+
+.tot-row .td-time {
+  background: #0f172a !important;
+  color: #94a3b8;
+}
+
+/* Buttons */
+.actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin: 20px 0 10px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 12px 28px;
+  border: none;
+  border-radius: 40px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+}
+
+.btn-save {
+  background: #7c3aed;
+  color: white;
+}
+
+.btn-print {
+  background: #047857;
+  color: white;
+}
+
+.btn-clear {
+  background: #dc2626;
+  color: white;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+/* Print */
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 8mm 10mm;
+  }
+  html, body {
+    background: white;
+    font-size: 9pt;
+  }
+  .page {
+    padding: 0;
+    max-width: 100%;
+  }
+  .topbar, .actions, .save-badge, .hint {
+    display: none !important;
+  }
+
+  /* Meta card */
+  .meta-card {
+    border: 1px solid #aaa;
+    margin-bottom: 5px;
+    padding: 5px 10px;
+  }
+  .meta-field label { font-size: 8pt; margin-bottom: 1px; }
+  .meta-field input { font-size: 9pt; padding: 1px 4px; }
+
+  /* Gap between two panchayat cards */
+  .panchayat-card {
+    border: 1px solid #999;
+    margin-bottom: 6px;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Card header */
+  .card-header {
+    background: #d8d8d8 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    padding: 5px 12px 0 12px;
+  }
+  .card-header h2 {
+    color: black !important;
+    font-size: 11pt;
+    margin-bottom: 4px;
+  }
+
+  /* Voter count boxes */
+  .voter-row { padding-bottom: 6px; gap: 6px; }
+  .voter-box {
+    background: #f0f0f0 !important;
+    border: 1px solid #ccc;
+    padding: 3px 8px;
+  }
+  .voter-box label { font-size: 7.5pt; }
+  .voter-box input, .voter-box .val {
+    color: black !important;
+    font-size: 13pt;
+  }
+
+  /* Data table */
+  .data-table {
+    font-size: 9pt;
+    min-width: unset;
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  /* Fixed column widths - time wide, data narrow */
+  .data-table colgroup { display: table-column-group; }
+  .td-time {
+    width: 68px !important;
+    padding-left: 6px;
+    font-size: 8.5pt;
+    white-space: nowrap;
+  }
+
+  .data-table th {
+    font-size: 7.5pt;
+    padding: 6px 1px;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+  .data-table td {
+    font-size: 9pt;
+    font-weight: 700;
+    padding: 7px 1px;
+    text-align: center;
+  }
+  .data-table th, .data-table td {
+    border: 1px solid #bbb;
+  }
+
+  /* Input inside table cells */
+  input.pin-input {
+    border: none !important;
+    background: transparent !important;
+    width: 32px !important;
+    font-size: 9pt !important;
+    font-weight: 700 !important;
+    padding: 0 !important;
+  }
+
+  /* Total row */
+  .tot-row td {
+    background: #e0e0e0 !important;
+    color: black !important;
+    font-weight: 800;
+    font-size: 9pt;
+    padding: 7px 1px;
+  }
+}
+
+@media (max-width: 700px) {
+  input.pin-input {
+    width: 55px;
+  }
+  .voter-box input {
+    font-size: 16px;
+  }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="topbar">
+    <div class="topbar-title">⚡ <em>ચૂંટણી</em> મતદાન ટકાવારી કેલ્ક્યુલેટર</div>
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <span class="save-badge" id="saveBadge">✓ સેવ થયું</span>
+      <select class="lang-sel" id="langSel">
+        <option value="gu">🇮🇳 ગુજરાતી</option>
+        <option value="hi">🇮🇳 हिन्दी</option>
+        <option value="en">🇬🇧 English</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="meta-card">
+    <div class="meta-field">
+      <label id="tpNameLabel">🏛️ તાલુકા પંચાયતનું નામ</label>
+      <input type="text" id="tpName" placeholder="ઉદા. તાલુકા પંચાયત">
+    </div>
+    <div class="meta-field">
+      <label id="dpNameLabel">🏢 જિલ્લા પંચાયતનું નામ</label>
+      <input type="text" id="dpName" placeholder="જિલ્લા પંચાયત">
+      <div class="hint" id="dpHintText">⚡ નંબર ટાઈપ કરો (TP એ enter કર્યા બાદ DP ઓટો-ફિલ)</div>
+    </div>
+    <div class="meta-field">
+      <label id="psLabel">🗳️ મતદાન મથક</label>
+      <div class="ps-double">
+        <input type="text" id="psName" placeholder="મથકનું નામ">
+        <input type="text" id="psNumber" placeholder="નંબર">
+      </div>
+    </div>
+  </div>
+
+  <!-- Taluka Panchayat -->
+  <div class="panchayat-card">
+    <div class="card-header tp">
+      <h2 id="tpTitle">🏛️ તાલુકા પંચાયત</h2>
+      <div class="voter-row">
+        <div class="voter-box"><label id="tpML">પુરૂષ મતદારો</label><input type="text" id="tpRM" placeholder="0" inputmode="numeric"></div>
+        <div class="voter-box"><label id="tpFL">સ્ત્રી મતદારો</label><input type="text" id="tpRF" placeholder="0" inputmode="numeric"></div>
+        <div class="voter-box tot"><label id="tpTL">કુલ મતદારો</label><div class="val" id="tpRT">—</div></div>
+      </div>
+    </div>
+    <div class="table-wrapper">
+      <table class="data-table">
+        <colgroup>
+          <col style="width:72px"><!-- time -->
+          <col style="width:44px"><col style="width:44px"><col style="width:40px"><!-- prog voting -->
+          <col style="width:52px"><col style="width:52px"><col style="width:48px"><!-- prog % -->
+          <col style="width:44px"><col style="width:44px"><col style="width:40px"><!-- 2h voting -->
+          <col style="width:52px"><col style="width:52px"><col style="width:48px"><!-- 2h % -->
+        </colgroup>
+        <thead id="tpHead"></thead>
+        <tbody id="tpBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- District Panchayat -->
+  <div class="panchayat-card">
+    <div class="card-header dp">
+      <h2 id="dpTitle">🏢 જિલ્લા પંચાયત</h2>
+      <div class="voter-row">
+        <div class="voter-box"><label id="dpML">પુરૂષ મતદારો</label><input type="text" id="dpRM" placeholder="0" inputmode="numeric"></div>
+        <div class="voter-box"><label id="dpFL">સ્ત્રી મતદારો</label><input type="text" id="dpRF" placeholder="0" inputmode="numeric"></div>
+        <div class="voter-box tot"><label id="dpTL">કુલ મતદારો</label><div class="val" id="dpRT">—</div></div>
+      </div>
+    </div>
+    <div class="table-wrapper">
+      <table class="data-table">
+        <colgroup>
+          <col style="width:72px"><!-- time -->
+          <col style="width:44px"><col style="width:44px"><col style="width:40px"><!-- prog voting -->
+          <col style="width:52px"><col style="width:52px"><col style="width:48px"><!-- prog % -->
+          <col style="width:44px"><col style="width:44px"><col style="width:40px"><!-- 2h voting -->
+          <col style="width:52px"><col style="width:52px"><col style="width:48px"><!-- 2h % -->
+        </colgroup>
+        <thead id="dpHead"></thead>
+        <tbody id="dpBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-save" id="saveBtn">💾 <span id="btnS">ડેટા સેવ</span></button>
+    <button class="btn btn-print" id="printBtn">📄 <span id="btnP">PDF પ્રિન્ટ</span></button>
+    <button class="btn btn-clear" id="clearBtn">🗑️ <span id="btnC">ડેટા સાફ</span></button>
+  </div>
+</div>
+
+<script>
+const TIME_SLOTS = ['07:00 – 09:00', '09:00 – 11:00', '11:00 – 13:00', '13:00 – 15:00', '15:00 – 17:00', '17:00 – 18:00'];
+
+const LANG = {
+  gu: {
+    tp: '🏛️ તાલુકા પંચાયત', dp: '🏢 જિલ્લા પંચાયત',
+    mR: 'પુરૂષ મતદારો', fR: 'સ્ત્રી મતદારો', tR: 'કુલ મતદારો',
+    time: 'સમય', pgG: 'પ્રોગ્રેસિવ મતદાન', pgM: '(પુ.)', pgF: '(સ્ત્રી)', pgT: '(કુ.)',
+    pctG: 'પ્રોગ્રેસિવ ટકાવારી', pctM: '% (પુ.)', pctF: '% (સ્ત્રી)', pctT: '% (કુ.)',
+    v2G: 'દર બે કલાક મતદાન', v2M: '(પુ.)', v2F: '(સ્ત્રી)', v2T: '(કુ.)',
+    v2pG: 'દર બે કલાક ટકાવારી', v2pM: '% (પુ.)', v2pF: '% (સ્ત્રી)', v2pT: '% (કુ.)',
+    total: 'કુલ', save: 'ડેટા સેવ', print: 'PDF પ્રિન્ટ', clr: 'ડેટા સાફ',
+    tpNameL: '🏛️ તાલુકા પંચાયતનું નામ', dpNameL: '🏢 જિલ્લા પંચાયતનું નામ', psLabel: '🗳️ મતદાન મથક',
+    dpHint: '⚡ નંબર ટાઈપ કરો (TP એ enter કર્યા બાદ DP ઓટો-ફિલ)'
+  },
+  hi: {
+    tp: '🏛️ तालुका पंचायत', dp: '🏢 जिला पंचायत',
+    mR: 'पुरुष मतदाता', fR: 'महिला मतदाता', tR: 'कुल मतदाता',
+    time: 'समय', pgG: 'प्रोग्रेसिव मतदान', pgM: '(पु.)', pgF: '(म.)', pgT: '(कु.)',
+    pctG: 'प्रोग्रेसिव प्रतिशत', pctM: '% (पु.)', pctF: '% (म.)', pctT: '% (कु.)',
+    v2G: 'प्रति दो घंटे मतदान', v2M: '(पु.)', v2F: '(म.)', v2T: '(कु.)',
+    v2pG: 'प्रति दो घंटे प्रतिशत', v2pM: '% (पु.)', v2pF: '% (म.)', v2pT: '% (कु.)',
+    total: 'कुल', save: 'सेव', print: 'PDF प्रिंट', clr: 'साफ़',
+    tpNameL: '🏛️ तालुका पंचायत का नाम', dpNameL: '🏢 जिला पंचायत का नाम', psLabel: '🗳️ मतदान केंद्र',
+    dpHint: '⚡ संख्या दर्ज करें (TP डेटा के बाद DP स्वतः भरेगा)'
+  },
+  en: {
+    tp: '🏛️ Taluka Panchayat', dp: '🏢 District Panchayat',
+    mR: 'Male Voters', fR: 'Female Voters', tR: 'Total Voters',
+    time: 'Time', pgG: 'Progressive Voting', pgM: '(M)', pgF: '(F)', pgT: '(T)',
+    pctG: 'Progressive %', pctM: '% (M)', pctF: '% (F)', pctT: '% (T)',
+    v2G: 'Per 2-Hour Voting', v2M: '(M)', v2F: '(F)', v2T: '(T)',
+    v2pG: 'Per 2-Hour %', v2pM: '% (M)', v2pF: '% (F)', v2pT: '% (T)',
+    total: 'TOTAL', save: 'Save', print: 'Print PDF', clr: 'Clear',
+    tpNameL: '🏛️ Taluka Panchayat Name', dpNameL: '🏢 District Panchayat Name', psLabel: '🗳️ Polling Station',
+    dpHint: '⚡ Enter numbers (DP auto-fills from TP entry)'
+  }
+};
+
+let currentLang = 'gu';
+let dpManualM = false, dpManualF = false;
+let dpSlotManual = Array(6).fill().map(() => ({ m: false, f: false }));
+let dpNameManual = false;
+
+function $(id) { return document.getElementById(id); }
+
+function buildTableHead() {
+  const l = LANG[currentLang];
+  return `<tr><th class="hd-time" rowspan="2">${l.time}</th><th class="hd-prog" colspan="3">${l.pgG}</th><th class="hd-pct" colspan="3">${l.pctG}</th><th class="hd-2h" colspan="3">${l.v2G}</th><th class="hd-2hpct" colspan="3">${l.v2pG}</th></td><tr class="sub"><th>${l.pgM}</th><th>${l.pgF}</th><th>${l.pgT}</th><th>${l.pctM}</th><th>${l.pctF}</th><th>${l.pctT}</th><th>${l.v2M}</th><th>${l.v2F}</th><th>${l.v2T}</th><th>${l.v2pM}</th><th>${l.v2pF}</th><th>${l.v2pT}</th></tr>`;
+}
+
+function buildTableBody(prefix) {
+  let html = '';
+  for (let i = 0; i < TIME_SLOTS.length; i++) {
+    html += `<tr><td class="td-time">${TIME_SLOTS[i]}</td>
+      <td><input class="pin-input" type="text" id="${prefix}_pm_${i}" placeholder="0" inputmode="numeric"></td>
+      <td><input class="pin-input" type="text" id="${prefix}_pf_${i}" placeholder="0" inputmode="numeric"></td>
+      <td class="c-total" id="${prefix}_pt_${i}">—</td>
+      <td class="c-male" id="${prefix}_pctm_${i}">—</td><td class="c-female" id="${prefix}_pctf_${i}">—</td><td class="c-total" id="${prefix}_pctt_${i}">—</td>
+      <td class="c-male" id="${prefix}_2hm_${i}">—</td><td class="c-female" id="${prefix}_2hf_${i}">—</td><td class="c-total" id="${prefix}_2ht_${i}">—</td>
+      <td class="c-male" id="${prefix}_2hpm_${i}">—</td><td class="c-female" id="${prefix}_2hpf_${i}">—</td><td class="c-total" id="${prefix}_2hpt_${i}">—</td>
+    </tr>`;
+  }
+  html += `<tr class="tot-row"><td class="td-time">${LANG[currentLang].total}</td>
+    <td class="c-male" id="${prefix}_tot_pm">—</td><td class="c-female" id="${prefix}_tot_pf">—</td><td class="c-total" id="${prefix}_tot_pt">—</td>
+    <td class="c-male" id="${prefix}_tot_pctm">—</td><td class="c-female" id="${prefix}_tot_pctf">—</td><td class="c-total" id="${prefix}_tot_pctt">—</td>
+    <td class="c-male" id="${prefix}_tot_2hm">—</td><td class="c-female" id="${prefix}_tot_2hf">—</td><td class="c-total" id="${prefix}_tot_2ht">—</td>
+    <td class="c-male" id="${prefix}_tot_2hpm">—</td><td class="c-female" id="${prefix}_tot_2hpf">—</td><td class="c-total" id="${prefix}_tot_2hpt">—</td>
+  </tr>`;
+  return html;
+}
+
+function getNum(id) { let e = $(id); if (!e || e.value === '') return null; let v = parseFloat(e.value); return isNaN(v) ? null : v; }
+function setText(id, val) { let e = $(id); if (e) e.innerText = val; }
+
+function calculate(prefix) {
+  let regM = getNum(prefix + 'RM') || 0;
+  let regF = getNum(prefix + 'RF') || 0;
+  let regT = regM + regF;
+  setText(prefix + 'RT', regT > 0 ? regT : '—');
+  
+  let progM = [], progF = [];
+  for (let i = 0; i < 6; i++) {
+    progM.push(getNum(prefix + '_pm_' + i));
+    progF.push(getNum(prefix + '_pf_' + i));
+  }
+  
+  let prevM = 0, prevF = 0, sum2M = 0, sum2F = 0, lastM = 0, lastF = 0;
+  for (let i = 0; i < 6; i++) {
+    let pm = progM[i], pf = progF[i];
+    let hasM = pm !== null, hasF = pf !== null;
+    let curM = hasM ? pm : 0, curF = hasF ? pf : 0, curT = curM + curF;
+    
+    setText(prefix + '_pt_' + i, (hasM || hasF) ? curT : '—');
+    setText(prefix + '_pctm_' + i, (hasM && regM) ? ((curM / regM) * 100).toFixed(2) + '%' : '—');
+    setText(prefix + '_pctf_' + i, (hasF && regF) ? ((curF / regF) * 100).toFixed(2) + '%' : '—');
+    setText(prefix + '_pctt_' + i, ((hasM || hasF) && regT) ? ((curT / regT) * 100).toFixed(2) + '%' : '—');
+    
+    let v2M = hasM ? (curM - prevM) : null;
+    let v2F = hasF ? (curF - prevF) : null;
+    let v2T = (v2M !== null || v2F !== null) ? ((v2M || 0) + (v2F || 0)) : null;
+    
+    setText(prefix + '_2hm_' + i, v2M !== null ? v2M : '—');
+    setText(prefix + '_2hf_' + i, v2F !== null ? v2F : '—');
+    setText(prefix + '_2ht_' + i, v2T !== null ? v2T : '—');
+    setText(prefix + '_2hpm_' + i, (v2M !== null && regM) ? ((v2M / regM) * 100).toFixed(2) + '%' : '—');
+    setText(prefix + '_2hpf_' + i, (v2F !== null && regF) ? ((v2F / regF) * 100).toFixed(2) + '%' : '—');
+    setText(prefix + '_2hpt_' + i, (v2T !== null && regT) ? ((v2T / regT) * 100).toFixed(2) + '%' : '—');
+    
+    if (hasM) { sum2M += (v2M || 0); prevM = curM; lastM = curM; }
+    if (hasF) { sum2F += (v2F || 0); prevF = curF; lastF = curF; }
+  }
+  let finalT = lastM + lastF;
+  setText(prefix + '_tot_pm', lastM > 0 ? lastM : '—');
+  setText(prefix + '_tot_pf', lastF > 0 ? lastF : '—');
+  setText(prefix + '_tot_pt', finalT > 0 ? finalT : '—');
+  setText(prefix + '_tot_pctm', (lastM && regM) ? ((lastM / regM) * 100).toFixed(2) + '%' : '—');
+  setText(prefix + '_tot_pctf', (lastF && regF) ? ((lastF / regF) * 100).toFixed(2) + '%' : '—');
+  setText(prefix + '_tot_pctt', (finalT && regT) ? ((finalT / regT) * 100).toFixed(2) + '%' : '—');
+  setText(prefix + '_tot_2hm', sum2M > 0 ? sum2M : '—');
+  setText(prefix + '_tot_2hf', sum2F > 0 ? sum2F : '—');
+  setText(prefix + '_tot_2ht', (sum2M + sum2F) > 0 ? (sum2M + sum2F) : '—');
+  setText(prefix + '_tot_2hpm', (sum2M && regM) ? ((sum2M / regM) * 100).toFixed(2) + '%' : '—');
+  setText(prefix + '_tot_2hpf', (sum2F && regF) ? ((sum2F / regF) * 100).toFixed(2) + '%' : '—');
+  setText(prefix + '_tot_2hpt', ((sum2M + sum2F) && regT) ? (((sum2M + sum2F) / regT) * 100).toFixed(2) + '%' : '—');
+}
+
+function calculateBoth() { calculate('tp'); calculate('dp'); }
+
+// Sync TP to DP always, unless user manually changed that DP slot
+function syncProgToDistrict(slot, gender) {
+  if (dpSlotManual[slot] && dpSlotManual[slot][gender]) return;
+  let dpField = $(`dp_${gender === 'm' ? 'pm' : 'pf'}_${slot}`);
+  let tpField = $(`tp_${gender === 'm' ? 'pm' : 'pf'}_${slot}`);
+  if (dpField && tpField) {
+    dpField.value = tpField.value;
+  }
+}
+
+function onProgInput(prefix, slot, gender) {
+  if (prefix === 'tp') {
+    syncProgToDistrict(slot, gender);
+    calculateBoth();
+    triggerAutoSave();
+  } else {
+    if (!dpSlotManual[slot]) dpSlotManual[slot] = { m: false, f: false };
+    dpSlotManual[slot][gender] = true;
+    calculateBoth();
+    triggerAutoSave();
+  }
+}
+
+function syncVoterToDistrict(gender) {
+  if (gender === 'M' && !dpManualM) {
+    let dpField = $('dpRM');
+    let tpVal = $('tpRM')?.value;
+    if (dpField && tpVal !== undefined) { dpField.value = tpVal; calculate('dp'); }
+  }
+  if (gender === 'F' && !dpManualF) {
+    let dpField = $('dpRF');
+    let tpVal = $('tpRF')?.value;
+    if (dpField && tpVal !== undefined) { dpField.value = tpVal; calculate('dp'); }
+  }
+}
+
+function onTpVoterInput(gender) { syncVoterToDistrict(gender); calculateBoth(); triggerAutoSave(); }
+function onDpVoterInput(gender) { if (gender === 'M') dpManualM = true; else dpManualF = true; calculateBoth(); triggerAutoSave(); }
+
+function onTpNameChange() { triggerAutoSave(); }
+function onDpNameInput() { dpNameManual = true; triggerAutoSave(); }
+
+function applyLanguage() {
+  const l = LANG[currentLang];
+  $('tpTitle').innerText = l.tp; $('dpTitle').innerText = l.dp;
+  $('tpML').innerText = l.mR; $('tpFL').innerText = l.fR; $('tpTL').innerText = l.tR;
+  $('dpML').innerText = l.mR; $('dpFL').innerText = l.fR; $('dpTL').innerText = l.tR;
+  $('btnS').innerText = l.save; $('btnP').innerText = l.print; $('btnC').innerText = l.clr;
+  $('tpNameLabel').innerHTML = l.tpNameL; $('dpNameLabel').innerHTML = l.dpNameL; $('psLabel').innerHTML = l.psLabel;
+  $('dpHintText').innerHTML = l.dpHint;
+  
+  $('tpHead').innerHTML = buildTableHead();
+  $('dpHead').innerHTML = buildTableHead();
+  $('tpBody').innerHTML = buildTableBody('tp');
+  $('dpBody').innerHTML = buildTableBody('dp');
+  
+  for (let i = 0; i < 6; i++) {
+    $(`tp_pm_${i}`)?.addEventListener('input', () => onProgInput('tp', i, 'm'));
+    $(`tp_pf_${i}`)?.addEventListener('input', () => onProgInput('tp', i, 'f'));
+    $(`dp_pm_${i}`)?.addEventListener('input', () => onProgInput('dp', i, 'm'));
+    $(`dp_pf_${i}`)?.addEventListener('input', () => onProgInput('dp', i, 'f'));
+    $(`tp_pm_${i}`)?.addEventListener('blur', () => triggerAutoSave());
+    $(`tp_pf_${i}`)?.addEventListener('blur', () => triggerAutoSave());
+  }
+  calculateBoth();
+}
+
+function collectData() {
+  let data = { dpManualM, dpManualF, dpNameManual, dpSlotManual: JSON.parse(JSON.stringify(dpSlotManual)) };
+  data.tpRM = $('tpRM')?.value || ''; data.tpRF = $('tpRF')?.value || '';
+  data.dpRM = $('dpRM')?.value || ''; data.dpRF = $('dpRF')?.value || '';
+  for (let i = 0; i < 6; i++) {
+    data[`tp_pm_${i}`] = $(`tp_pm_${i}`)?.value || '';
+    data[`tp_pf_${i}`] = $(`tp_pf_${i}`)?.value || '';
+    data[`dp_pm_${i}`] = $(`dp_pm_${i}`)?.value || '';
+    data[`dp_pf_${i}`] = $(`dp_pf_${i}`)?.value || '';
+  }
+  data.tpName = $('tpName')?.value || '';
+  data.dpName = $('dpName')?.value || '';
+  data.psName = $('psName')?.value || '';
+  data.psNumber = $('psNumber')?.value || '';
+  return data;
+}
+
+function restoreData(data) {
+  if (!data) return;
+  dpManualM = data.dpManualM || false;
+  dpManualF = data.dpManualF || false;
+  dpNameManual = data.dpNameManual || false;
+  if (data.dpSlotManual) dpSlotManual = data.dpSlotManual;
+  $('tpRM').value = data.tpRM || '';
+  $('tpRF').value = data.tpRF || '';
+  $('dpRM').value = data.dpRM || '';
+  $('dpRF').value = data.dpRF || '';
+  for (let i = 0; i < 6; i++) {
+    if ($(`tp_pm_${i}`)) $(`tp_pm_${i}`).value = data[`tp_pm_${i}`] || '';
+    if ($(`tp_pf_${i}`)) $(`tp_pf_${i}`).value = data[`tp_pf_${i}`] || '';
+    if ($(`dp_pm_${i}`)) $(`dp_pm_${i}`).value = data[`dp_pm_${i}`] || '';
+    if ($(`dp_pf_${i}`)) $(`dp_pf_${i}`).value = data[`dp_pf_${i}`] || '';
+  }
+  $('tpName').value = data.tpName || '';
+  $('dpName').value = data.dpName || '';
+  $('psName').value = data.psName || '';
+  $('psNumber').value = data.psNumber || '';
+  calculateBoth();
+}
+
+let saveTimer;
+function triggerAutoSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    localStorage.setItem('election_data_final', JSON.stringify(collectData()));
+    let badge = $('saveBadge');
+    if (badge) { badge.style.display = 'inline-block'; setTimeout(() => badge.style.display = 'none', 1500); }
+  }, 800);
+}
+function manualSave() { localStorage.setItem('election_data_final', JSON.stringify(collectData())); alert('✓ ' + LANG[currentLang].save); }
+function clearAll() { if (confirm(LANG[currentLang].clr + '?')) { localStorage.removeItem('election_data_final'); location.reload(); } }
+function changeLang() { currentLang = $('langSel').value; let saved = collectData(); applyLanguage(); restoreData(saved); localStorage.setItem('lang', currentLang); }
+
+// Fix PDF button - use window.print directly
+window.onload = () => {
+  let savedLang = localStorage.getItem('lang');
+  if (savedLang && LANG[savedLang]) currentLang = savedLang;
+  $('langSel').value = currentLang;
+  applyLanguage();
+  
+  let savedData = localStorage.getItem('election_data_final');
+  if (savedData) { try { restoreData(JSON.parse(savedData)); } catch(e) {} }
+  else calculateBoth();
+  
+  $('tpRM').addEventListener('input', () => onTpVoterInput('M'));
+  $('tpRF').addEventListener('input', () => onTpVoterInput('F'));
+  $('dpRM').addEventListener('input', () => onDpVoterInput('M'));
+  $('dpRF').addEventListener('input', () => onDpVoterInput('F'));
+  $('tpName').addEventListener('input', onTpNameChange);
+  $('dpName').addEventListener('input', onDpNameInput);
+  $('psName').addEventListener('input', triggerAutoSave);
+  $('psNumber').addEventListener('input', triggerAutoSave);
+  $('langSel').addEventListener('change', changeLang);
+  $('saveBtn').addEventListener('click', manualSave);
+  $('printBtn').addEventListener('click', () => window.print());
+  $('clearBtn').addEventListener('click', clearAll);
+  
+  // Add blur events for all number inputs to ensure full number capture
+  $('tpRM').addEventListener('blur', triggerAutoSave);
+  $('tpRF').addEventListener('blur', triggerAutoSave);
+  $('dpRM').addEventListener('blur', triggerAutoSave);
+  $('dpRF').addEventListener('blur', triggerAutoSave);
+};
+</script>
+</body>
+</html>
